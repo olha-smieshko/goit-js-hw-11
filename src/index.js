@@ -4,6 +4,7 @@ import { getImages } from './js/getImages';
 import {
   openImageModal,
   refreshImageModal,
+  closeModal,
  } from './js/simpleLightBox';
 import scrollBy from './js/smoothScroll';
 
