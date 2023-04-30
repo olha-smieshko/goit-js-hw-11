@@ -12,7 +12,7 @@ const form = document.querySelector('.search-form');
 const galleryEl = document.querySelector('.gallery');
 const lastMessage = document.querySelector('.last-message');
 const target = document.querySelector('.js-guard');
-const submitButton = document.querySelector("button[type='submit']");
+
 
 
 let currentPage = 1;
