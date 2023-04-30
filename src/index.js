@@ -4,13 +4,11 @@ import { getImages } from './js/getImages';
 import {
   openImageModal,
   refreshImageModal,
-  closeModal,
- } from './js/simpleLightBox';
+  } from './js/simpleLightBox';
 
 
 const form = document.querySelector('.search-form');
 const galleryEl = document.querySelector('.gallery');
-const lastMessage = document.querySelector('.last-message');
 const target = document.querySelector('.js-guard');
 
 
@@ -70,7 +68,6 @@ async function renderImagesOnLoadMore() {
     const dataArray = response.data.hits;    
     if (dataArray.length * currentPage >= response.data.totalHits) {
       observer.unobserve(target);
-      lastMessage.textContent = `Hooray! All ${response.data.totalHits} images has finished.`;
       Notify.info(`Hooray! All ${response.data.totalHits} images has finished.`);
       currentPage = 1;
       loadMore = false;
@@ -108,8 +105,6 @@ async function renderImagesBySubmit() {
     
     if (dataArray.length * currentPage >= response.data.totalHits) {
         observer.unobserve(target);
-        lastMessage.textContent = `Hooray! All ${response.data.totalHits} images has finished.`;
-        Notify.info(`Hooray! All ${response.data.totalHits} images has finished.`);
         currentPage = 1;
         loadMore = false;
         
