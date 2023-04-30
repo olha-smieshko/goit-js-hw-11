@@ -6,15 +6,18 @@ import {
   refreshImageModal,
   closeModal,
  } from './js/simpleLightBox';
-import scrollBy from './js/smoothScroll';
+
 
 const form = document.querySelector('.search-form');
 const galleryEl = document.querySelector('.gallery');
 const lastMessage = document.querySelector('.last-message');
 const target = document.querySelector('.js-guard');
+const submitButton = document.querySelector("button[type='submit']");
+
 
 let currentPage = 1;
 let queryParam = null;
+let loadMore = false;
 
 let options = {
   root: null,
@@ -30,38 +33,51 @@ galleryEl.addEventListener('click', evt => {
 });
 
 function onLoadMore(entries, observer) {
+   
+    if (!loadMore){
+        return;
+    }
   entries.forEach(entry => {
     if (entry.isIntersecting) {
-      currentPage += 1;
-      renderImagesOnLoadMore();
+    currentPage += 1;
+    renderImagesOnLoadMore();
+             
     }
   });
+
 }
 
-function onSearchForm(evt) {
+async function onSearchForm(evt) {
   evt.preventDefault();
-  queryParam = evt.currentTarget.elements.searchQuery.value;
   galleryEl.innerHTML = '';
+  queryParam = evt.currentTarget.elements.searchQuery.value.trim();
+  
   if (!queryParam) {
     Notify.warning('Please, fill the field');
+    
     return;
-  }
-  renderImagesBySubmit(queryParam);
+
+  };
+  
+  await renderImagesBySubmit(queryParam);
   observer.observe(target);
+ 
 }
 
 async function renderImagesOnLoadMore() {
-  try {
+  try { 
     const response = await getImages(queryParam, currentPage);
-    const dataArray = response.data.hits;
-
-    galleryEl.insertAdjacentHTML('beforeend', createMarkup(dataArray));
-    if (dataArray.length * currentPage > response.data.totalHits) {
+    const dataArray = response.data.hits;    
+    if (dataArray.length * currentPage >= response.data.totalHits) {
       observer.unobserve(target);
-      lastMessage.textContent = `Hooray! All images has finished.`;
-    }
-    scrollBy();
-
+      lastMessage.textContent = `Hooray! All ${response.data.totalHits} images has finished.`;
+      Notify.info(`Hooray! All ${response.data.totalHits} images has finished.`);
+      currentPage = 1;
+      loadMore = false;
+     
+    };
+    
+    galleryEl.insertAdjacentHTML('beforeend', createMarkup(dataArray));
     const newGalleryItems = galleryEl.querySelectorAll('.gallery a');
     newGalleryItems.forEach(item => {
       item.addEventListener('click', e => {
@@ -79,15 +95,32 @@ async function renderImagesBySubmit() {
   try {
     const response = await getImages(queryParam);
     const dataArray = response.data.hits;
-    galleryEl.innerHTML = createMarkup(dataArray);
+    
     if (!dataArray.length) {
         throw new Error('not found');
+       
     } 
     if (dataArray.length){
         Notify.info(`Hooray! We found ${response.data.totalHits} images.`);
+        galleryEl.innerHTML = createMarkup(dataArray);
+        
+    }
+    
+    if (dataArray.length * currentPage >= response.data.totalHits) {
+        observer.unobserve(target);
+        lastMessage.textContent = `Hooray! All ${response.data.totalHits} images has finished.`;
+        Notify.info(`Hooray! All ${response.data.totalHits} images has finished.`);
+        currentPage = 1;
+        loadMore = false;
+        
+       
+      } else {
+        loadMore = true;
+      }
+
         openImageModal();
-        scrollBy();
-}
+       
+
       
   } catch (error) {
     Notify.failure('Sorry, there are no images matching your search query. Please try again.');
