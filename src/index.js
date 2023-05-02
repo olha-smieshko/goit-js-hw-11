@@ -5,7 +5,7 @@ import {
   openImageModal,
   refreshImageModal,
   } from './js/simpleLightBox';
-
+  import scrollBy from './js/smoothScroll';
 
 const form = document.querySelector('.search-form');
 const galleryEl = document.querySelector('.gallery');
@@ -73,7 +73,8 @@ async function renderImagesOnLoadMore() {
       loadMore = false;
      
     };
-    
+    scrollBy();
+
     galleryEl.insertAdjacentHTML('beforeend', createMarkup(dataArray));
     const newGalleryItems = galleryEl.querySelectorAll('.gallery a');
     newGalleryItems.forEach(item => {
@@ -115,7 +116,7 @@ async function renderImagesBySubmit() {
 
         openImageModal();
        
-
+        scrollBy();
       
   } catch (error) {
     Notify.failure('Sorry, there are no images matching your search query. Please try again.');
