@@ -71,9 +71,9 @@ async function renderImagesOnLoadMore() {
       Notify.info(`Hooray! All ${response.data.totalHits} images has finished.`);
       currentPage = 1;
       loadMore = false;
-     
+      scrollBy();
     };
-    scrollBy();
+    
 
     galleryEl.insertAdjacentHTML('beforeend', createMarkup(dataArray));
     const newGalleryItems = galleryEl.querySelectorAll('.gallery a');
@@ -116,7 +116,7 @@ async function renderImagesBySubmit() {
 
         openImageModal();
        
-        scrollBy();
+        // scrollBy();
       
   } catch (error) {
     Notify.failure('Sorry, there are no images matching your search query. Please try again.');
